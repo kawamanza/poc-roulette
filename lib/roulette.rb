@@ -2,6 +2,13 @@ Dir.glob(File.join File.dirname(__FILE__), 'util', '*.rb').each do |file|
   require file
 end
 
+# Loading API
+%w[
+  number
+].each do |file|
+  require File.join(File.dirname(__FILE__), file)
+end
+
 # Loading params
 config_file = "config/roulette.yml"
 unless File.exists? config_file
