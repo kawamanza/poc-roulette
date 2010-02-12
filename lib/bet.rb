@@ -8,13 +8,13 @@ module PocRoulette
 
   module Bet
     class BlackBet < IBet
-      def accept?(line); line =~ /^B(:?\d+)?$/; end
+      def accept?(line); line == "black" || line =~ /^B(:?\d+)?$/; end
       def match?(n); n.color == :black; end
       def factor; 2; end
     end
 
     class RedBet < IBet
-      def accept?(line); line =~ /^R(:?\d+)?$/; end
+      def accept?(line); line == "red" || line =~ /^R(:?\d+)?$/; end
       def match?(n); n.color == :red; end
       def factor; 2; end
     end
