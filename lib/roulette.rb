@@ -4,6 +4,7 @@ end
 
 # Loading API
 %w[
+  bet
   number
 ].each do |file|
   require File.join(File.dirname(__FILE__), file)
