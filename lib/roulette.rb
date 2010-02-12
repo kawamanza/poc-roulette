@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'activesupport'
 Dir.glob(File.join File.dirname(__FILE__), 'util', '*.rb').each do |file|
   require file
 end
@@ -6,6 +8,7 @@ end
 %w[
   bet
   number
+  strategy
 ].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
