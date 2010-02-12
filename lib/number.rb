@@ -5,6 +5,7 @@ module PocRoulette
       @number = args.shift
       @color  = args.shift
     end
+    def roulette; self; end
     class << self
       def numbers
         @@numbers ||= []
@@ -20,5 +21,11 @@ module PocRoulette
       pos = (pos + 1) % 2 if [11, 19, 29].include?(n)
       add n, n.zero? ? :green : [:red, :black][pos]
     end
+  end
+end
+
+class Fixnum
+  def roulette
+    PocRoulette::Number.numbers[self]
   end
 end
