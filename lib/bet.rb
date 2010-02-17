@@ -9,25 +9,25 @@ module PocRoulette
   module Bet
     class BlackBet < IBet
       def accept?(line); line == "black" || line =~ /^B(:?\d+)?$/; end
-      def match?(n); n.color == :black; end
+      def match?(n); n.roulette.color == :black; end
       def factor; 2; end
     end
 
     class RedBet < IBet
       def accept?(line); line == "red" || line =~ /^R(:?\d+)?$/; end
-      def match?(n); n.color == :red; end
+      def match?(n); n.roulette.color == :red; end
       def factor; 2; end
     end
 
     class EvenBet < IBet
       def accept?(line); line =~ /^E(:?\d+)?$/; end
-      def match?(n); n.number % 2 == 0; end
+      def match?(n); n.even?; end
       def factor; 2; end
     end
 
     class OddBet < IBet
-      def accept?(line); line =~ /^E(:?\d+)?$/; end
-      def match?(n); n.number % 2 == 1; end
+      def accept?(line); line =~ /^O(:?\d+)?$/; end
+      def match?(n); n.odd?; end
       def factor; 2; end
     end
 
@@ -58,7 +58,7 @@ module PocRoulette
     class NumberBet < IBet
       def initialize(n); @n = n; @re = Regexp.new("^#{n}(:\\d+)?$"); end
       def accept?(line); line =~ @re; end
-      def match?(n); n.number == @n; end
+      def match?(n); n == @n; end
       def factor; 36; end
       def self.matchers; (0..36).to_a.collect{ |n| new(n) }; end
     end
