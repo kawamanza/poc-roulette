@@ -8,6 +8,7 @@ end
 %w[
   bet
   number
+  dealer
   strategy
 ].each do |file|
   require File.join(File.dirname(__FILE__), file)
@@ -21,5 +22,5 @@ unless File.exists? config_file
 end
 require 'yaml'
 ccputs "{green}Loading #{config_file}"
-config = YAML::load_file config_file
+PocConfig = YAML::load_file config_file
 
