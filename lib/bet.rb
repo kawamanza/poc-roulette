@@ -22,15 +22,17 @@ module PocRoulette
     end
 
     class EvenBet < IBet
-      def accept?(line); line =~ /^E(:?\d+)?$/; end
+      def accept?(line); line == "even" || line =~ /^E(:?\d+)?$/; end
       def match?(n); n.even?; end
       def factor; 2; end
+      def to_s; "E"; end
     end
 
     class OddBet < IBet
-      def accept?(line); line =~ /^O(:?\d+)?$/; end
+      def accept?(line); line == "odd" || line =~ /^O(:?\d+)?$/; end
       def match?(n); n.odd?; end
       def factor; 2; end
+      def to_s; "O"; end
     end
 
     class RangeBet < IBet
@@ -41,6 +43,7 @@ module PocRoulette
       def accept?(line); line =~ @re; end
       def match?(n); @range.include?(n); end
       def factor; @factor; end
+      def to_s; @range.to_s; end
       def self.matchers
         matchers = [[1..18, 2],[19..36, 2]]
         matchers += (1..34).select{ |n| n%3==1 }.collect{ |n| [Range.new(n, n+2), 12] }
