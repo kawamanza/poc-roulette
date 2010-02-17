@@ -11,12 +11,14 @@ module PocRoulette
       def accept?(line); line == "black" || line =~ /^B(:?\d+)?$/; end
       def match?(n); n.roulette.color == :black; end
       def factor; 2; end
+      def to_s; "B"; end
     end
 
     class RedBet < IBet
       def accept?(line); line == "red" || line =~ /^R(:?\d+)?$/; end
       def match?(n); n.roulette.color == :red; end
       def factor; 2; end
+      def to_s; "R"; end
     end
 
     class EvenBet < IBet

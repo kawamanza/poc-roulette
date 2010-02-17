@@ -1,11 +1,13 @@
 module PocRoulette
   class SpotBet
     attr_reader :value, :matcher
-    attr_accessor :number
-    def initialize(matcher, value)
+    attr_reader :owner
+    def initialize(matcher, value, owner)
       @matcher, @value = matcher, value
+      @owner = owner
     end
     def bet_location; matcher.to_s; end
+    def number; owner.number; end
     def earned_value
       if number.nil?
         0
@@ -13,10 +15,14 @@ module PocRoulette
         matcher.match?(number) ? matcher.factor * value : 0
       end
     end
+    def to_s
+      "#{earned_value == 0 ? "{blue}" : "{light_blue}"}#{matcher}:#{value}"
+    end
   end
 
   class PlacedBet
     attr_reader :spots
+    attr_accessor :number
     def initialize
       @spots = []
     end
@@ -24,9 +30,19 @@ module PocRoulette
       spot = location.to_s
       matcher = Matchers.select{ |m| m.accept?(spot) }.first
       raise "Invalid spot: #{spot}" if matcher.nil?
-      spots << SpotBet.new(matcher, value)
+      spots << SpotBet.new(matcher, value, self)
+    end
+    def chips
+      spots.collect(&:value).inject(0){ |b, n| b + n }
+    end
+    def earned_value
+      spots.collect(&:earned_value).inject(0){ |b, n| b + n }
+    end
+    def to_s
+      spots.collect(&:to_s).join(' ')
     end
   end
+
   class Strategy
     @@strategies = {}
     attr_reader :bet_history

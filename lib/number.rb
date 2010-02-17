@@ -14,6 +14,9 @@ module PocRoulette
         numbers << Number.new(*args) if numbers.select{ |n| n.number == args.first }.empty?
       end
     end
+    def to_s
+      "{#{color}}#{number}"
+    end
 
     pos = 0
     37.times do |n|
