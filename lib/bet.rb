@@ -23,7 +23,7 @@ module PocRoulette
 
     class EvenBet < IBet
       def accept?(line); line == "even" || line =~ /^E(:?\d+)?$/; end
-      def match?(n); n.even?; end
+      def match?(n); n.even? && !n.zero?; end
       def factor; 2; end
       def to_s; "E"; end
     end
