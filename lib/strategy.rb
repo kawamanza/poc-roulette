@@ -63,6 +63,25 @@ module PocRoulette
       def [](strategy); @@strategies[strategy]; end
     end
   end
+
+  class SpotStatistic
+    attr_reader :matcher, :delay, :frequency, :last_delay
+    def initialize(matcher)
+      @matcher = matcher
+      @delay = 0
+      @frequency = 0
+    end
+    def update_stats(n)
+      @last_delay = delay
+      if @matcher.match?(n)
+        @frequency += 1
+        @delay = 0
+      else
+        @delay += 1
+      end
+    end
+    def to_s; @matcher.to_s; end
+  end
 end
 
 ccputs "{light_blue}Strategies:"
