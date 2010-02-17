@@ -25,5 +25,12 @@ Spec::Rake::SpecTask.new("spec") do |t|
   t.spec_files = FileList["spec/**/*_spec.rb"]
 end
 
+desc "Run all specs with RCov"
+Spec::Rake::SpecTask.new("spec:rcov") do |t|
+  t.spec_files = FileList["spec/**/**_spec.rb"]
+  t.rcov = true
+  t.rcov_opts = ["--exclude", "spec,Library/*,gems/*"]
+end
+
 task :default => :spec
 
