@@ -37,6 +37,7 @@ module PocRoulette
           end
           ccputs "Placed bet #{"%#{counter.to_s.size}d" % [n+1]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
           bet_handle.bet_history << bet
+          sleep PocConfig['roulette']['sleep'] unless PocConfig['roulette']['sleep'].nil?
         end
         puts '='*50
         ccputs "Total bets count: {yellow}#{counter}"

@@ -1,4 +1,5 @@
 roulette:
+  sleep: 0
   total_bets: 100
   initial_chips: 1000
   strategy: double_plus_one
