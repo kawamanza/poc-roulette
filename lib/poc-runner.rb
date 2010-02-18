@@ -9,7 +9,11 @@ module PocRoulette
     def strategy
       strategy = poc_strategy_class.new(bet_history)
       strategy.update_statistics unless bet_history.empty?
-      strategy.suggest if strategy.respond_to?(:suggest)
+      if strategy.respond_to?(:first_bet) && strategy.respond_to(:other_bets)
+        bet_history.empty? ? strategy.first_bet : strategy.other_bets
+      else
+        strategy.suggest
+      end
       strategy
     end
     class << self
