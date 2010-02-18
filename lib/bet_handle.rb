@@ -29,19 +29,21 @@ module PocRoulette
       self.balance -= bet.chips
       bet.number = dealer.next_number
       self.balance += bet.earned_value
-      if balance < balance_range[0]
-        balance_color = "{red}"
-        balance_range[0] = balance
-      elsif balance > balance_range[1]
-        balance_color = "{light_green}"
-        balance_range[1] = balance
-      elsif balance >= initial_chips
-        balance_color = "{blue}"
-      else
-        balance_color = "{brown}"
-      end
       ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
       bet_history << bet
+    end
+    def balance_color
+      if balance < balance_range[0]
+        balance_range[0] = balance
+        "{red}"
+      elsif balance > balance_range[1]
+        balance_range[1] = balance
+        "{light_green}"
+      elsif balance >= initial_chips
+        "{blue}"
+      else
+        "{brown}"
+      end
     end
     class << self
       def run!
