@@ -15,7 +15,7 @@ module PocRoulette
       end
     end
     def to_s
-      "{#{color}}#{number}"
+      "{#{color == :black ? :dark_gray : color}}#{number}"
     end
 
     pos = 0
