@@ -1,10 +1,16 @@
 module PocRoulette
   class BetHandle
     attr_reader :bet_history, :dealer, :poc_strategy_class
+    attr_reader :initial_chips, :total_bets, :balance_range
+    attr_accessor :balance, :counter
     def initialize
       @bet_history = []
       @dealer = PocRoulette::Dealer.new
       @poc_strategy_class = PocRoulette::Strategy[PocConfig['roulette']['strategy']]
+      self.balance = @initial_chips = PocConfig['roulette']['initial_chips'] || 1000
+      @balance_range = [balance, balance]
+      @total_bets = PocConfig['roulette']['total_bets'] || 100
+      @counter = 0
     end
     def strategy
       strategy = poc_strategy_class.new(bet_history)
@@ -16,39 +22,40 @@ module PocRoulette
       end
       strategy
     end
+    def next_bet
+      self.counter += 1
+      bet = strategy.new_bet
+      raise "You lost!" if bet.chips > balance
+      self.balance -= bet.chips
+      bet.number = dealer.next_number
+      self.balance += bet.earned_value
+      if balance < balance_range[0]
+        balance_color = "{red}"
+        balance_range[0] = balance
+      elsif balance > balance_range[1]
+        balance_color = "{light_green}"
+        balance_range[1] = balance
+      elsif balance >= initial_chips
+        balance_color = "{blue}"
+      else
+        balance_color = "{brown}"
+      end
+      ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter+1]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
+      bet_history << bet
+    end
     class << self
       def run
         bet_handle = self.new
-        initial_balance = balance = PocConfig['roulette']['initial_chips'] || 1000
-        counter = PocConfig['roulette']['total_bets'] || 100
-        balance_stats = [initial_balance, initial_balance]
-        counter.times do |n|
-          bet = bet_handle.strategy.new_bet
-          raise "You lost!" if bet.chips > balance
-          balance = balance - bet.chips
-          bet.number = bet_handle.dealer.next_number
-          balance += bet.earned_value
-          if balance < balance_stats[0]
-            balance_color = "{red}"
-            balance_stats[0] = balance
-          elsif balance > balance_stats[1]
-            balance_color = "{light_green}"
-            balance_stats[1] = balance
-          elsif balance >= initial_balance
-            balance_color = "{blue}"
-          else
-            balance_color = "{brown}"
-          end
-          ccputs "Placed bet #{"%#{counter.to_s.size}d" % [n+1]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
-          bet_handle.bet_history << bet
+        bet_handle.total_bets.times do |n|
+          bet_handle.next_bet
           sleep PocConfig['roulette']['sleep'] unless PocConfig['roulette']['sleep'].nil?
         end
         puts '='*50
-        ccputs "Total bets count: {yellow}#{counter}"
-        ccputs "Initial balance: {green}#{initial_balance} {default}chips"
-        ccputs "Minimal balance: {brown}#{balance_stats[0]}"
-        ccputs "Maximal balance: {light_green}#{balance_stats[1]}"
-        ccputs "Final balance: {green}#{balance} {default}chips"
+        ccputs "Total bets count: {yellow}#{bet_handle.total_bets}"
+        ccputs "Initial balance: {green}#{bet_handle.initial_chips} {default}chips"
+        ccputs "Minimal balance: {brown}#{bet_handle.balance_range[0]}"
+        ccputs "Maximal balance: {light_green}#{bet_handle.balance_range[1]}"
+        ccputs "Final balance: {green}#{bet_handle.balance} {default}chips"
       end
     end
   end
