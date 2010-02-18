@@ -21,6 +21,23 @@ unless File.exists? config_file
   exit 1
 end
 require 'yaml'
-ccputs "{green}Loading #{config_file}"
 PocConfig = YAML::load_file config_file
 
+require 'optparse'
+OptionParser.new do |parser|
+  parser.banner = "Usage: #{File.basename($0)} [OPTIONS]"
+  parser.separator "\nOPTIONS:"
+  parser.on("-h", "--help", "This message") do
+    puts parser
+    exit
+  end
+  parser.on("-c", "--with-chips=CHIPS", "Set the initial chips") do |chips|
+    PocConfig['roulette']['initial_chips'] = chips.to_i
+  end
+  parser.on("-b", "--total-bets=BETS", "Set the total bets") do |bets|
+    PocConfig['roulette']['total_bets'] = bets.to_i
+  end
+  parser.on("-s", "--strategy=STRATEGY", "Set the strategy") do |strategy|
+    PocConfig['roulette']['strategy'] = strategy
+  end
+end.parse!
