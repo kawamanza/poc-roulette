@@ -1,6 +1,6 @@
 module PocRoulette
   class DoublePlusOneStrategy < Strategy
-    def strategy
+    def suggest
       if last_bet.nil?
         new_bet.add_bet :black, 2
         new_bet.add_bet :red, 1
