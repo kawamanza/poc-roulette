@@ -10,6 +10,7 @@ end
   number
   dealer
   strategy
+  bet_handle
 ].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
