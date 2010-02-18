@@ -40,7 +40,7 @@ module PocRoulette
       else
         balance_color = "{brown}"
       end
-      ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter+1]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
+      ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
       bet_history << bet
     end
     class << self
