@@ -9,11 +9,7 @@ module PocRoulette
     def bet_location; matcher.to_s; end
     def number; owner.number; end
     def earned_value
-      if number.nil?
-        0
-      else
-        matcher.match?(number) ? matcher.factor * value : 0
-      end
+      number.nil? || ! matcher.match?(number) ? 0 : matcher.factor * value
     end
     def to_s
       "#{earned_value == 0 ? "{blue}" : "{light_blue}"}#{matcher}:#{value}"
@@ -43,27 +39,6 @@ module PocRoulette
     end
   end
 
-  class Strategy
-    @@strategies = {}
-    attr_reader :bet_history
-    def initialize(history)
-      @bet_history = history
-    end
-    def new_bet
-      @new_bet ||= PlacedBet.new
-    end
-    def last_bet
-      bet_history.last
-    end
-    class << self
-      def inherited(base)
-        base_name = base.to_s.underscore.split('/').last.sub(/_strategy$/, '')
-        @@strategies[base_name] = base
-      end
-      def [](strategy); @@strategies[strategy]; end
-    end
-  end
-
   class SpotStatistic
     attr_reader :matcher, :delay, :frequency, :last_delay
     def initialize(matcher)
@@ -81,6 +56,31 @@ module PocRoulette
       end
     end
     def to_s; @matcher.to_s; end
+  end
+
+  class Strategy
+    @@strategies = {}
+    @@statistics = Matchers.collect{ |m| SpotStatistic.new(m) }
+    attr_reader :bet_history
+    def initialize(history)
+      @bet_history = history
+    end
+    def new_bet
+      @new_bet ||= PlacedBet.new
+    end
+    def last_bet
+      bet_history.last
+    end
+    def update_statistics
+      @@statistics.each{ |spot| spot.update_stats(last_bet.number) }
+    end
+    class << self
+      def inherited(base)
+        base_name = base.to_s.underscore.split('/').last.sub(/_strategy$/, '')
+        @@strategies[base_name] = base
+      end
+      def [](strategy); @@strategies[strategy]; end
+    end
   end
 end
 
