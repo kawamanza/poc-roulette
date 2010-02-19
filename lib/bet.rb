@@ -57,6 +57,7 @@ module PocRoulette
       def initialize(n); @re, @rest = Regexp.new("^c#{n==0 ? 3 : n}(:\\d+)?$"), n; end
       def accept?(line); line =~ @re; end
       def match?(n); n % 3 == @rest; end
+      def to_s; "c#{@rest==0 ? 3 : @rest}"; end
       def self.matchers; 3.times.collect{ |n| new((n+1)%3) }; end
     end
 
@@ -65,6 +66,8 @@ module PocRoulette
       def accept?(line); line =~ @re; end
       def match?(n); n == @n; end
       def factor; 36; end
+      def to_s; @n.to_s; end
+      def number; @n; end
       def self.matchers; (0..36).to_a.collect{ |n| new(n) }; end
     end
   end
