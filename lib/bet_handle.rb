@@ -45,6 +45,24 @@ module PocRoulette
         "{brown}"
       end
     end
+    def show_statistics
+      puts '='*50
+      ccputs "Total bets count: {yellow}#{total_bets}"
+      ccputs "Initial balance: {green}#{initial_chips} {default}chips"
+      ccputs "Minimal balance: {brown}#{balance_range[0]}"
+      ccputs "Maximal balance: {light_green}#{balance_range[1]}"
+      ccputs "Final balance: {green}#{balance} {default}chips"
+      puts '='*50
+      spot_statistics = poc_strategy_class.statistics.sort do |spot1, spot2|
+        f = spot1.matcher.factor <=> spot2.matcher.factor
+        f == 0 ? (spot1.frequency <=> spot2.frequency) * -1 : f
+      end
+      #spot_statistics.select{ |spot| spot.frequency > 0 }.each do |spot|
+      spot_statistics = spot_statistics.select{ |spot| spot.matcher.factor < 4 || spot.matcher.is_a?(Bet::NumberBet) && spot.matcher.number == 0 }
+      spot_statistics.each do |spot|
+        ccputs "Spot: {blue}#{spot}", "Frequency: {yellow}#{spot.frequency}"
+      end
+    end
     class << self
       def run!
         bet_handle = self.new
@@ -52,12 +70,7 @@ module PocRoulette
           bet_handle.next_bet
           sleep PocConfig['roulette']['sleep'] unless PocConfig['roulette']['sleep'].nil?
         end
-        puts '='*50
-        ccputs "Total bets count: {yellow}#{bet_handle.total_bets}"
-        ccputs "Initial balance: {green}#{bet_handle.initial_chips} {default}chips"
-        ccputs "Minimal balance: {brown}#{bet_handle.balance_range[0]}"
-        ccputs "Maximal balance: {light_green}#{bet_handle.balance_range[1]}"
-        ccputs "Final balance: {green}#{bet_handle.balance} {default}chips"
+        bet_handle.show_statistics
       end
     end
   end
