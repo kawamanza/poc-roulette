@@ -80,6 +80,7 @@ module PocRoulette
         @@strategies[base_name] = base
       end
       def [](strategy); @@strategies[strategy]; end
+      def statistics; @@statistics; end
     end
   end
 end
