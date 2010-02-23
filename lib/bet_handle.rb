@@ -55,7 +55,12 @@ module PocRoulette
       puts '='*50
       spot_statistics = poc_strategy_class.statistics.sort do |spot1, spot2|
         f = spot1.matcher.factor <=> spot2.matcher.factor
-        f == 0 ? (spot1.frequency <=> spot2.frequency) * -1 : f
+        c = spot1.matcher.class.to_s <=> spot2.matcher.class.to_s
+        if f.zero?
+          (c.zero? ? (spot1.frequency <=> spot2.frequency) * -1 : c)
+        else
+          f
+        end
       end
       #spot_statistics.select{ |spot| spot.frequency > 0 }.each do |spot|
       spot_statistics = spot_statistics.select{ |spot| spot.matcher.factor < 4 || spot.matcher.is_a?(Bet::NumberBet) && spot.matcher.number == 0 }
