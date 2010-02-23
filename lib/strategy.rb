@@ -61,6 +61,7 @@ module PocRoulette
   class Strategy
     @@strategies = {}
     @@statistics = Matchers.collect{ |m| SpotStatistic.new(m) }
+    @@earning = { :more_than_bet => 0, :less_than_bet => 0, :nothing => 0 }
     attr_reader :bet_history
     def initialize(history)
       @bet_history = history
@@ -73,6 +74,13 @@ module PocRoulette
     end
     def update_statistics
       @@statistics.each{ |spot| spot.update_stats(last_bet.number) }
+      if last_bet.earned_value == 0
+        @@earning[:nothing] += 1
+      elsif last_bet.earned_value > last_bet.chips
+        @@earning[:more_than_bet] += 1
+      else
+        @@earning[:less_than_bet] += 1
+      end
     end
     class << self
       def inherited(base)
@@ -81,6 +89,7 @@ module PocRoulette
       end
       def [](strategy); @@strategies[strategy]; end
       def statistics; @@statistics; end
+      def earning; @@earning; end
     end
   end
 end

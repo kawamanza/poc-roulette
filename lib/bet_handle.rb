@@ -53,6 +53,10 @@ module PocRoulette
       ccputs "Maximal balance: {light_green}#{balance_range[1]}"
       ccputs "Final balance: {green}#{balance} {default}chips"
       puts '='*50
+      ccputs "Earned less than bet: {brown}#{poc_strategy_class.earning[:less_than_bet]}"
+      ccputs "Earned more than bet: {light_green}#{poc_strategy_class.earning[:more_than_bet]}"
+      ccputs "Earned nothing: {yellow}#{poc_strategy_class.earning[:nothing]}"
+      puts '='*50
       spot_statistics = poc_strategy_class.statistics.sort do |spot1, spot2|
         f = spot1.matcher.factor <=> spot2.matcher.factor
         c = spot1.matcher.class.to_s <=> spot2.matcher.class.to_s
