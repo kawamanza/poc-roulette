@@ -54,11 +54,12 @@ module PocRoulette
     end
 
     class ColumnBet < IBet
-      def initialize(n); @re, @rest = Regexp.new("^c#{n==0 ? 3 : n}(:\\d+)?$"), n; end
+      def initialize(n); @re = Regexp.new("^c#{n+1}(:\\d+)?$"); @rest = (n+1) % 3; end
       def accept?(line); line =~ @re; end
       def match?(n); n % 3 == @rest; end
+      def factor; 3; end
       def to_s; "c#{@rest==0 ? 3 : @rest}"; end
-      def self.matchers; 3.times.collect{ |n| new((n+1)%3) }; end
+      def self.matchers; 3.times.collect{ |n| new(n) }; end
     end
 
     class NumberBet < IBet
