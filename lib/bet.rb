@@ -7,18 +7,18 @@ module PocRoulette
   end
 
   module Bet
-    class BlackBet < IBet
-      def accept?(line); line == "black" || line =~ /^B(:?\d+)?$/; end
-      def match?(n); n.roulette.color == :black; end
+    class BlackOrRedBet < IBet
+      def initialize(short_color, color)
+        @re = Regexp.new("^#{short_color}(:?\\d+)?$")
+        @short_color, @color = short_color, color
+      end
+      def accept?(line); line == @color || line =~ @re; end
+      def match?(n); n.roulette.color.to_s == @color; end
       def factor; 2; end
-      def to_s; "B"; end
-    end
-
-    class RedBet < IBet
-      def accept?(line); line == "red" || line =~ /^R(:?\d+)?$/; end
-      def match?(n); n.roulette.color == :red; end
-      def factor; 2; end
-      def to_s; "R"; end
+      def to_s; @short_color; end
+      def self.matchers
+        [%w(B black), %w(R red)].collect{ |e| new(*e) }
+      end
     end
 
     class EvenBet < IBet
