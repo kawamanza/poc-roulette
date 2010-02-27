@@ -3,12 +3,14 @@ module PocRoulette
     attr_reader :bet_history, :dealer, :poc_strategy_class
     attr_reader :initial_chips, :total_bets, :balance_range
     attr_accessor :balance, :counter
+    attr_accessor :max_chips
     def initialize
       @bet_history = []
       @dealer = PocRoulette::Dealer.new
       @poc_strategy_class = PocRoulette::Strategy[PocConfig['roulette']['strategy']]
       self.balance = @initial_chips = PocConfig['roulette']['initial_chips'] || 1000
       @balance_range = [balance, balance]
+      @max_chips = 0
       @total_bets = PocConfig['roulette']['total_bets'] || 100
       @counter = 0
     end
@@ -29,7 +31,12 @@ module PocRoulette
       self.balance -= bet.chips
       bet.number = dealer.next_number
       self.balance += bet.earned_value
-      ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter]}: #{bet}", "Chips: {yellow}#{bet.chips}", "Number: #{bet.number.roulette}", "Earned: {green}#{bet.earned_value}", "Balance: #{balance_color}#{balance}"
+      ccputs "Placed bet #{"%#{total_bets.to_s.size}d" % [counter]}: #{bet}",
+        "Chips: #{ max_chips < bet.chips ? '{yellow}' : '{brown}' }#{bet.chips}",
+        "Number: #{bet.number.roulette}",
+        "Earned: {green}#{bet.earned_value}",
+        "Balance: #{balance_color}#{balance}"
+      self.max_chips = bet.chips if max_chips < bet.chips
       bet_history << bet
     end
     def balance_color
@@ -56,6 +63,8 @@ module PocRoulette
       ccputs "Earned less than bet: {brown}#{poc_strategy_class.earning[:less_than_bet]}"
       ccputs "Earned more than bet: {light_green}#{poc_strategy_class.earning[:more_than_bet]}"
       ccputs "Earned nothing: {yellow}#{poc_strategy_class.earning[:nothing]}"
+      puts '='*50
+      ccputs "Max chips count in one bet: {yellow}#{ max_chips }"
       puts '='*50
       spot_statistics = poc_strategy_class.statistics.sort do |spot1, spot2|
         f = spot1.matcher.factor <=> spot2.matcher.factor
