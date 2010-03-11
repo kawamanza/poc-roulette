@@ -88,6 +88,9 @@ module PocRoulette
           bet_handle.next_bet
           sleep PocConfig['roulette']['sleep'] unless PocConfig['roulette']['sleep'].nil?
         end
+      rescue => e
+        ccputs "{light_red}#{e.message}"
+      ensure
         bet_handle.show_statistics
       end
     end
