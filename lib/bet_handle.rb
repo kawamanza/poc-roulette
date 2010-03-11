@@ -4,6 +4,7 @@ module PocRoulette
     attr_reader :initial_chips, :total_bets, :balance_range
     attr_accessor :balance, :counter
     attr_accessor :max_chips
+    attr_accessor :max_chips_per_spot
     def initialize
       @bet_history = []
       @dealer = PocRoulette::Dealer.new
@@ -11,6 +12,7 @@ module PocRoulette
       self.balance = @initial_chips = PocConfig['roulette']['initial_chips'] || 1000
       @balance_range = [balance, balance]
       @max_chips = 0
+      @max_chips_per_spot = 0
       @total_bets = PocConfig['roulette']['total_bets'] || 100
       @counter = 0
     end
@@ -28,6 +30,9 @@ module PocRoulette
       self.counter += 1
       bet = strategy.new_bet
       raise "You lost!" if bet.chips > balance
+      bet.spots.each do |spot|
+        self.max_chips_per_spot = spot.value if max_chips_per_spot < spot.value
+      end
       self.balance -= bet.chips
       bet.number = dealer.next_number
       self.balance += bet.earned_value
@@ -65,6 +70,7 @@ module PocRoulette
       ccputs "Earned nothing: {yellow}#{poc_strategy_class.earning[:nothing]}"
       puts '='*50
       ccputs "Max chips count in one bet: {yellow}#{ max_chips }"
+      ccputs "Max chips count in one spot: {yellow}#{ max_chips_per_spot }"
       puts '='*50
       spot_statistics = poc_strategy_class.statistics.sort do |spot1, spot2|
         f = spot1.matcher.factor <=> spot2.matcher.factor
