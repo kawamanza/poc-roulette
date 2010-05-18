@@ -38,6 +38,9 @@ OptionParser.new do |parser|
   parser.on("-b", "--total-bets=BETS", "Set the total bets") do |bets|
     PocConfig['roulette']['total_bets'] = bets.to_i
   end
+  parser.on("-u", "--debugger", "Enable ruby-debugging") do
+    require 'ruby-debug'
+  end
   parser.on("-s", "--strategy=STRATEGY", "Set the strategy") do |strategy|
     PocConfig['roulette']['strategy'] = strategy
   end
